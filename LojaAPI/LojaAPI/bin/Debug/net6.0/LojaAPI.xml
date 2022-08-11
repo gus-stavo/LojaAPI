@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LojaAPI</name>
+    </assembly>
+    <members>
+        <member name="M:LojaAPI.Controllers.ClienteController.GetClientes">
+            <summary>
+            Retorna lista de clientes
+            </summary>
+            <response code="200">Retorna lista de clientes</response>
+        </member>
+        <member name="M:LojaAPI.Controllers.ClienteController.GetCliente(System.Int64)">
+            <summary>
+            Retorna cliente por id
+            </summary>
+            <response code="200">Retorna cliente</response>
+            <response code="404">Cliente não encontrado</response>
+        </member>
+        <member name="M:LojaAPI.Controllers.ClienteController.InsertCliente(LojaAPI.Domain.DTO.Cliente.InsertCliente)">
+            <summary>
+            Cria cliente
+            </summary>
+            <response code="201">Cliente criado</response>
+            <response code="422">Informação inválida ou não informada</response>
+            <response code="503">Servidor VIACEP indisponível</response>
+        </member>
+        <member name="M:LojaAPI.Controllers.ClienteController.UpdatetCliente(System.Int64,LojaAPI.Domain.DTO.Cliente.UpdateCliente)">
+            <summary>
+            Atualiza cliente
+            </summary>
+            <response code="204">Cliente atualizado</response>
+            <response code="404">Cliente não encontrado</response>
+            <response code="409">Id do cliente inválido</response>
+            <response code="422">Informação inválida ou não informada</response>
+            <response code="503">Servidor VIACEP indisponível</response>
+        </member>
+        <member name="M:LojaAPI.Controllers.ClienteController.DeleteCliente(System.Int64)">
+            <summary>
+            Exclui cliente
+            </summary>
+            <response code="204">Cliente excluído</response>
+            <response code="404">Cliente não encontrado</response>
+        </member>
+    </members>
+</doc>
