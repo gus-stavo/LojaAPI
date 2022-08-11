@@ -8,15 +8,17 @@ namespace LojaAPI.Infra.Data
     public class ClienteDAL : IClienteDAL
     {
         private readonly IConfiguration _configuration;
+        private readonly string _conn;
 
         public ClienteDAL(IConfiguration configuration) 
         {
             _configuration = configuration;
+            _conn = _configuration.GetConnectionString("LojaMSSQL") + ";AttachDbFilename = " + Directory.GetCurrentDirectory() + "\\AppData\\Loja.mdf";
         }
 
         public async Task<IEnumerable<Cliente>> GetClientes() 
         {
-            using var connection = new SqlConnection(_configuration.GetConnectionString("LojaMSSQL"));
+            using var connection = new SqlConnection(_conn);
 
             var clientes = await connection.QueryAsync<Cliente>("select * from clientes");
 
@@ -31,28 +33,28 @@ namespace LojaAPI.Infra.Data
 
         public async Task<Cliente> GetCliente(long id) 
         {
-            using var connection = new SqlConnection(_configuration.GetConnectionString("LojaMSSQL"));
+            using var connection = new SqlConnection(_conn);
 
             return await connection.QueryFirstOrDefaultAsync<Cliente>("select * from clientes where cd_Cliente = @cd_Cliente", new { cd_Cliente = id });
         }
 
         public async Task<int> InsertCliente(Cliente clienteInserido)
         {
-            using var connection = new SqlConnection(_configuration.GetConnectionString("LojaMSSQL"));
+            using var connection = new SqlConnection(_conn);
 
             return await connection.QuerySingleAsync<int>("insert into clientes (cd_CPF, cd_CNPJ, nm_Cliente, nm_RazaoSocial, cd_CEP, nm_Logradouro, cd_Logradouro, ds_Complemento, nm_Bairro, nm_Cidade, cd_Estado, ds_Email, ds_Classificacao) output inserted.cd_Cliente values (@cd_CPF, @cd_CNPJ, @nm_Cliente, @nm_RazaoSocial, @cd_CEP, @nm_Logradouro, @cd_Logradouro, @ds_Complemento, @nm_Bairro, @nm_Cidade, @cd_Estado, @ds_Email, @ds_Classificacao)", clienteInserido);
         }
 
         public async Task UpdateCliente(Cliente clienteAtualizado)
         {
-            using var connection = new SqlConnection(_configuration.GetConnectionString("LojaMSSQL"));
+            using var connection = new SqlConnection(_conn);
 
             await connection.ExecuteAsync("update clientes set cd_CPF = @cd_CPF, cd_CNPJ = @cd_CNPJ, nm_Cliente = @nm_Cliente, nm_RazaoSocial = @nm_RazaoSocial, cd_CEP = @cd_CEP, nm_Logradouro = @nm_Logradouro, cd_Logradouro = @cd_Logradouro, ds_Complemento = @ds_Complemento, nm_Bairro = @nm_Bairro, nm_Cidade = @nm_Cidade, cd_Estado = @cd_Estado, ds_Email = @ds_Email, ds_Classificacao = @ds_Classificacao where cd_Cliente = @cd_Cliente", clienteAtualizado);
         }
 
         public async Task DeleteCliente(long id)
         {
-            using var connection = new SqlConnection(_configuration.GetConnectionString("LojaMSSQL"));
+            using var connection = new SqlConnection(_conn);
 
             await connection.ExecuteAsync("delete from clientes where cd_Cliente = @cd_Cliente", new { cd_Cliente = id });
         }

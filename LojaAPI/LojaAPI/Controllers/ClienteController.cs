@@ -1,14 +1,8 @@
-﻿using Dapper;
-using LojaAPI.Domain.DTO.Cliente;
+﻿using LojaAPI.Domain.DTO.Cliente;
 using LojaAPI.Domain.Exceptions;
 using LojaAPI.Domain.Interfaces.Services;
 using LojaAPI.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System.Data.SqlClient;
-using System.Net;
-using System.Net.Mail;
-using System.Text.RegularExpressions;
 
 namespace LojaAPI.Controllers
 {
@@ -16,13 +10,11 @@ namespace LojaAPI.Controllers
     [ApiController]
     public class ClienteController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
         private readonly IClienteService _clienteService;
         private readonly ITelefoneClienteService _telefoneClienteService;
 
         public ClienteController(IConfiguration configuration, IClienteService clienteService, ITelefoneClienteService telefoneClienteService)
         {
-            _configuration = configuration;
             _clienteService = clienteService;
             _telefoneClienteService = telefoneClienteService;
         }
