@@ -12,6 +12,7 @@ namespace LojaAPI.Domain.Models
         [Required]
         public long cd_Cliente { get; set; }
 
+        [MaxLength(11)]
         [Required]
         public string cd_Telefone { get; set; } = null!;
     }

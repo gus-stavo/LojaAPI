@@ -1,5 +1,5 @@
-﻿using LojaAPI.Domain.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using LojaAPI.Domain.DTO.TelefoneCliente;
 
 namespace LojaAPI.Domain.DTO.Cliente
 {
@@ -28,7 +28,7 @@ namespace LojaAPI.Domain.DTO.Cliente
         public string ds_Email { get; set; } = null!;
 
         [Required(ErrorMessage = "Insira ao menos um telefone.")]
-        public List<TelefoneCliente> telefonesCliente { get; set; } = null!;
+        public List<InsertTelefoneCliente> telefonesCliente { get; set; } = null!;
 
         [MaxLength(12)]
         [Required(ErrorMessage = "O campo \"Classificação\" é obrigatório.")]

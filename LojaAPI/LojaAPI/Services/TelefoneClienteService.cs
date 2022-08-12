@@ -1,6 +1,7 @@
 ﻿using LojaAPI.Domain.Interfaces.DAL;
 using LojaAPI.Domain.Interfaces.Services;
 using LojaAPI.Domain.Models;
+using LojaAPI.Domain.DTO.TelefoneCliente;
 
 namespace LojaAPI.Services
 {
@@ -13,20 +14,45 @@ namespace LojaAPI.Services
             _telefoneClienteDAL = telefoneClienteDAL;
         }
 
-        public async Task<IEnumerable<TelefoneCliente>> GetTelefones(long id)
+        public async Task<IEnumerable<TelefoneCliente>> GetTelefones(long idCliente)
         {
-            return await _telefoneClienteDAL.GetTelefones(id);
+            return await _telefoneClienteDAL.GetTelefones(idCliente);
         }
 
-        public async Task InsertTelefones(long id, List<TelefoneCliente> telefonesCliente)
+        public async Task InsertTelefones(long idCliente, List<InsertTelefoneCliente> telefonesClienteDTO)
         {
-            telefonesCliente.ForEach(tc => { tc.cd_Cliente = id; });
+            List<TelefoneCliente> telefonesCliente = new List<TelefoneCliente>();
+
+            foreach (var telefoneClienteDTO in telefonesClienteDTO) 
+            {
+                var telefoneCliente = new TelefoneCliente()
+                {
+                    cd_Cliente = idCliente,
+                    cd_Telefone = telefoneClienteDTO.cd_Telefone,
+                };
+
+                telefonesCliente.Add(telefoneCliente);
+            }
 
             await _telefoneClienteDAL.InsertTelefones(telefonesCliente);
         }
 
-        public async Task UpdateTelefones(long id, List<TelefoneCliente> telefonesCliente)
+        public async Task UpdateTelefones(long idCliente, List<UpdateTelefoneCliente> telefonesClienteDTO)
         {
+            List<TelefoneCliente> telefonesCliente = new List<TelefoneCliente>();
+
+            foreach (var telefoneClienteDTO in telefonesClienteDTO)
+            {
+                var telefoneCliente = new TelefoneCliente()
+                {
+                    cd_TelefonesClientes = telefoneClienteDTO.cd_TelefonesClientes,
+                    cd_Cliente = idCliente,
+                    cd_Telefone = telefoneClienteDTO.cd_Telefone,
+                };
+
+                telefonesCliente.Add(telefoneCliente);
+            }
+
             List<TelefoneCliente> telefonesClienteAtualizados = new List<TelefoneCliente>();
             List<TelefoneCliente> telefonesClientesinseridos = new List<TelefoneCliente>();
             List<long> cd_TelefonesClientes = new List<long>();
@@ -40,20 +66,20 @@ namespace LojaAPI.Services
             await _telefoneClienteDAL.UpdateTelefones(telefonesClienteAtualizados);
             telefonesClienteAtualizados.ForEach(tca => { cd_TelefonesClientes.Add(tca.cd_TelefonesClientes); });
 
-            telefonesClientesinseridos.ForEach(tci => { tci.cd_Cliente = id; });
+            //telefonesClientesinseridos.ForEach(tci => { tci.cd_Cliente = idCliente; });
 
             foreach (var telefoneClienteInserido in telefonesClientesinseridos)
             {
-                telefoneClienteInserido.cd_Cliente = id;
+                telefoneClienteInserido.cd_Cliente = idCliente;
                 cd_TelefonesClientes.Add(await _telefoneClienteDAL.InsertTelefone(telefoneClienteInserido));
             }
 
-            await _telefoneClienteDAL.DeleteTelefones(id, cd_TelefonesClientes);
+            await _telefoneClienteDAL.DeleteTelefones(idCliente, cd_TelefonesClientes);
         }
 
-        public async Task DeleteTelefones(long id)
+        public async Task DeleteTelefones(long idCliente)
         {
-            await _telefoneClienteDAL.DeleteTelefones(id);
+            await _telefoneClienteDAL.DeleteTelefones(idCliente);
         }
     }
 }

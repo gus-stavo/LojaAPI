@@ -27,6 +27,18 @@ namespace LojaAPI.Services
 
         public async Task<int> InsertCliente(InsertCliente clienteInseridoDTO)
         {
+            List<TelefoneCliente> telefonesCliente = new List<TelefoneCliente>();
+
+            foreach (var telefoneClienteDTO in clienteInseridoDTO.telefonesCliente)
+            {
+                var telefoneCliente = new TelefoneCliente()
+                {
+                    cd_Telefone = telefoneClienteDTO.cd_Telefone,
+                };
+
+                telefonesCliente.Add(telefoneCliente);
+            }
+
             var clienteInserido = new Cliente()
             {
                 cd_CPF = clienteInseridoDTO.cd_CPF,
@@ -36,7 +48,7 @@ namespace LojaAPI.Services
                 cd_CEP = clienteInseridoDTO.cd_CEP,
                 cd_Logradouro = clienteInseridoDTO.cd_Logradouro,
                 ds_Email = clienteInseridoDTO.ds_Email,
-                telefonesCliente = clienteInseridoDTO.telefonesCliente,
+                telefonesCliente = telefonesCliente,
                 ds_Classificacao = clienteInseridoDTO.ds_Classificacao,
             };
 
@@ -47,6 +59,19 @@ namespace LojaAPI.Services
 
         public async Task UpdateCliente(long id, UpdateCliente clienteAtualizadoDTO)
         {
+            List<TelefoneCliente> telefonesCliente = new List<TelefoneCliente>();
+
+            foreach (var telefoneClienteDTO in clienteAtualizadoDTO.telefonesCliente)
+            {
+                var telefoneCliente = new TelefoneCliente()
+                {
+                    cd_Cliente = id,
+                    cd_Telefone = telefoneClienteDTO.cd_Telefone,
+                };
+
+                telefonesCliente.Add(telefoneCliente);
+            }
+
             var clienteAtualizado = new Cliente()
             {
                 cd_Cliente = clienteAtualizadoDTO.cd_Cliente,
@@ -57,7 +82,7 @@ namespace LojaAPI.Services
                 cd_CEP = clienteAtualizadoDTO.cd_CEP,
                 cd_Logradouro = clienteAtualizadoDTO.cd_Logradouro,
                 ds_Email = clienteAtualizadoDTO.ds_Email,
-                telefonesCliente = clienteAtualizadoDTO.telefonesCliente,
+                telefonesCliente = telefonesCliente,
                 ds_Classificacao = clienteAtualizadoDTO.ds_Classificacao,
             };
 

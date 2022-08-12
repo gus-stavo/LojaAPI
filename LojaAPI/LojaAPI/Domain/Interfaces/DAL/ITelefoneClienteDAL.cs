@@ -4,7 +4,7 @@ namespace LojaAPI.Domain.Interfaces.DAL
 {
     public interface ITelefoneClienteDAL
     {
-        Task<IEnumerable<TelefoneCliente>> GetTelefones(long id);
+        Task<IEnumerable<TelefoneCliente>> GetTelefones(long idCliente);
 
         Task<int> InsertTelefone(TelefoneCliente telefoneCliente);
 
@@ -12,9 +12,9 @@ namespace LojaAPI.Domain.Interfaces.DAL
 
         Task UpdateTelefones(List<TelefoneCliente> telefonesCliente);
 
-        Task DeleteTelefones(long id);
+        Task DeleteTelefones(long idCliente);
 
-        Task DeleteTelefones(long id, List<long> ids);
+        Task DeleteTelefones(long idCliente, List<long> ids);
 
     }
 }

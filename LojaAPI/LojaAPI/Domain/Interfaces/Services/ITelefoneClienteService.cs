@@ -1,15 +1,16 @@
-﻿using LojaAPI.Domain.Models;
+﻿using LojaAPI.Domain.DTO.TelefoneCliente;
+using LojaAPI.Domain.Models;
 
 namespace LojaAPI.Domain.Interfaces.Services
 {
     public interface ITelefoneClienteService
     {
-        Task<IEnumerable<TelefoneCliente>> GetTelefones(long id);
+        Task<IEnumerable<TelefoneCliente>> GetTelefones(long idCliente);
 
-        Task InsertTelefones(long id, List<TelefoneCliente> telefonesCliente);
+        Task InsertTelefones(long idCliente, List<InsertTelefoneCliente> telefonesClienteDTO);
 
-        Task UpdateTelefones(long id, List<TelefoneCliente> telefonesCliente);
+        Task UpdateTelefones(long idCliente, List<UpdateTelefoneCliente> telefonesClienteDTO);
 
-        Task DeleteTelefones(long id);
+        Task DeleteTelefones(long idCliente);
     }
 }

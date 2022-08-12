@@ -17,11 +17,11 @@ namespace LojaAPI.Infra.Data
 
         }
 
-        public async Task<IEnumerable<TelefoneCliente>> GetTelefones(long id)
+        public async Task<IEnumerable<TelefoneCliente>> GetTelefones(long idCliente)
         {
             using var connection = new SqlConnection(_conn);
 
-            return await connection.QueryAsync<TelefoneCliente>("select * from telefones_clientes where cd_Cliente = @cd_Cliente", new { cd_Cliente = id });
+            return await connection.QueryAsync<TelefoneCliente>("select * from telefones_clientes where cd_Cliente = @cd_Cliente", new { cd_Cliente = idCliente });
         }
 
         public async Task<int> InsertTelefone(TelefoneCliente telefoneCliente)
@@ -46,18 +46,18 @@ namespace LojaAPI.Infra.Data
             await connection.ExecuteAsync($"update telefones_clientes set cd_Telefone = @cd_Telefone where cd_TelefonesClientes = @cd_TelefonesClientes", telefonesCliente);
         }
 
-        public async Task DeleteTelefones(long id)
+        public async Task DeleteTelefones(long idCliente)
         {
             using var connection = new SqlConnection(_conn);
 
-            await connection.ExecuteAsync("delete from telefones_clientes where cd_Cliente = @cd_Cliente", new { cd_Cliente = id });
+            await connection.ExecuteAsync("delete from telefones_clientes where cd_Cliente = @cd_Cliente", new { cd_Cliente = idCliente });
         }
 
-        public async Task DeleteTelefones(long id, List<long> ids)
+        public async Task DeleteTelefones(long idCliente, List<long> ids)
         {
             using var connection = new SqlConnection(_conn);
 
-            await connection.ExecuteAsync("delete from telefones_clientes where cd_Cliente = @cd_Cliente and cd_TelefonesClientes not in @cd_TelefonesClientes", new { cd_Cliente = id, cd_TelefonesClientes = ids});
+            await connection.ExecuteAsync("delete from telefones_clientes where cd_Cliente = @cd_Cliente and cd_TelefonesClientes not in @cd_TelefonesClientes", new { cd_Cliente = idCliente, cd_TelefonesClientes = ids});
         }
     }
 }
