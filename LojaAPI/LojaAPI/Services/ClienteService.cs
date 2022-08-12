@@ -40,7 +40,7 @@ namespace LojaAPI.Services
                 ds_Classificacao = clienteInseridoDTO.ds_Classificacao,
             };
 
-            await Validations.ValidateInput(clienteInserido);
+            await Validations.ValidateInputs(clienteInserido);
 
             return await _clienteDAL.InsertCliente(clienteInserido);
         }
@@ -61,7 +61,7 @@ namespace LojaAPI.Services
                 ds_Classificacao = clienteAtualizadoDTO.ds_Classificacao,
             };
 
-            await Validations.ValidateInput(clienteAtualizado);
+            await Validations.ValidateInputs(clienteAtualizado);
 
             await _clienteDAL.UpdateCliente(clienteAtualizado);
         }
