@@ -39,41 +39,48 @@ namespace LojaAPI.Infra.CrossCutting
         {
             string[] cpfsInvalidos = new string[] { "00000000000", "11111111111", "22222222222", "33333333333", "44444444444", "55555555555", "66666666666", "77777777777", "88888888888", "99999999999" };
 
-            if (cpfsInvalidos.Contains(clienteCPF)) throw new InputValidationException("CPF inválido.");
-
-            int cont = 10;
-            int aux = 0;
-            int i;
-
-            for (i = 0; i <= 8; i++)
+            if (!cpfsInvalidos.Contains(clienteCPF)) 
             {
-                aux += int.Parse(clienteCPF[i].ToString()) * cont;
-                cont--;
+                int cont = 10;
+                int aux = 0;
+                int i;
+
+                if (long.TryParse(clienteCPF, out long _))
+                {
+                    for (i = 0; i <= 8; i++)
+                    {
+                        aux += int.Parse(clienteCPF[i].ToString()) * cont;
+                        cont--;
+                    }
+
+                    aux *= 10;
+                    aux %= 11;
+
+                    if (aux == 10) aux = 0;
+
+                    if (aux == int.Parse(clienteCPF[9].ToString())) 
+                    {
+                        cont = 11;
+                        aux = 0;
+
+                        for (i = 0; i <= 9; i++)
+                        {
+                            aux += int.Parse(clienteCPF[i].ToString()) * cont;
+                            cont--;
+                        }
+
+                        aux *= 10;
+                        aux %= 11;
+
+                        if (aux == 10) aux = 0;
+                        if (aux == int.Parse(clienteCPF[10].ToString())) 
+                        {
+                            return true;    
+                        }
+                    }
+                }
             }
-
-            aux *= 10;
-            aux %= 11;
-
-            if (aux == 10) aux = 0;
-
-            if (!(aux == int.Parse(clienteCPF[9].ToString()))) throw new InputValidationException("CPF inválido.");
-
-            cont = 11;
-            aux = 0;
-
-            for (i = 0; i <= 9; i++)
-            {
-                aux += int.Parse(clienteCPF[i].ToString()) * cont;
-                cont--;
-            }
-
-            aux *= 10;
-            aux %= 11;
-
-            if (aux == 10) aux = 0;
-            if (!(aux == int.Parse(clienteCPF[10].ToString()))) throw new InputValidationException("CPF inválido.");
-
-            return true;
+            throw new InputValidationException("CPF inválido.");
         }
 
         public static async Task<bool> ValidateCnpj(string clienteCNPJ)
@@ -83,33 +90,39 @@ namespace LojaAPI.Infra.CrossCutting
             int aux = 0;
             int i;
 
-            for (i = 0; i <= 11; i++)
+            if (long.TryParse(clienteCNPJ, out long _)) 
             {
-                aux += int.Parse(clienteCNPJ[i].ToString()) * pesos1[i];
+                for (i = 0; i <= 11; i++)
+                {
+                    aux += int.Parse(clienteCNPJ[i].ToString()) * pesos1[i];
+                }
+
+                aux %= 11;
+
+                if (aux < 2) aux = 0;
+                else aux = 11 - aux;
+
+                if (aux == int.Parse(clienteCNPJ[12].ToString())) 
+                {
+                    aux = 0;
+
+                    for (i = 0; i <= 12; i++)
+                    {
+                        aux += int.Parse(clienteCNPJ[i].ToString()) * pesos2[i];
+                    }
+
+                    aux %= 11;
+
+                    if (aux < 2) aux = 0;
+                    else aux = 11 - aux;
+
+                    if (aux == int.Parse(clienteCNPJ[13].ToString()))
+                    {
+                        return true;
+                    }
+                }
             }
-
-            aux %= 11;
-
-            if (aux < 2) aux = 0;
-            else aux = 11 - aux;
-
-            if (!(aux == int.Parse(clienteCNPJ[12].ToString()))) throw new InputValidationException("CNPJ inválido.");
-
-            aux = 0;
-
-            for (i = 0; i <= 12; i++)
-            {
-                aux += int.Parse(clienteCNPJ[i].ToString()) * pesos2[i];
-            }
-
-            aux %= 11;
-
-            if (aux < 2) aux = 0;
-            else aux = 11 - aux;
-
-            if (!(aux == int.Parse(clienteCNPJ[13].ToString()))) throw new InputValidationException("CNPJ inválido.");
-
-            return true;
+            throw new InputValidationException("CNPJ inválido.");
         }
 
         public static async Task<bool> ValidateCep(Cliente cliente)
@@ -118,34 +131,39 @@ namespace LojaAPI.Infra.CrossCutting
 
             if (!String.IsNullOrWhiteSpace(clienteCEP))
             {
-                HttpWebRequest request =  (HttpWebRequest)WebRequest.Create($"https://viacep.com.br/ws/{clienteCEP}/json/");
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-                if (response.StatusCode != HttpStatusCode.OK) throw new ServiceUnavailableException("Servidor VIACEP indisponível.");
-
-                using (Stream webStream = response.GetResponseStream())
+                if (int.TryParse(clienteCEP, out int _)) 
                 {
-                    if (webStream != null)
+                    HttpWebRequest request =  (HttpWebRequest)WebRequest.Create($"https://viacep.com.br/ws/{clienteCEP}/json/");
+                    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+                    if (response.StatusCode != HttpStatusCode.OK) throw new ServiceUnavailableException("Servidor VIACEP indisponível.");
+
+                    using (Stream webStream = response.GetResponseStream())
                     {
-                        using (StreamReader responseReader = new StreamReader(webStream))
+                        if (webStream != null)
                         {
-                            string strResponse = responseReader.ReadToEnd();
-                            dynamic CEP = JsonConvert.DeserializeObject<object>(strResponse);
+                            using (StreamReader responseReader = new StreamReader(webStream))
+                            {
+                                string strResponse = responseReader.ReadToEnd();
+                                dynamic CEP = JsonConvert.DeserializeObject<object>(strResponse);
 
-                            if (CEP.erro == "true") throw new InputValidationException("CEP inválido.");
+                                if (CEP.erro != "true") 
+                                {
+                                    cliente.nm_Logradouro = CEP.logradouro;
+                                    cliente.ds_Complemento = CEP.complemento;
+                                    cliente.nm_Bairro = CEP.bairro;
+                                    cliente.nm_Cidade = CEP.localidade;
+                                    cliente.cd_Estado = CEP.uf;
 
-                            cliente.nm_Logradouro = CEP.logradouro;
-                            cliente.ds_Complemento = CEP.complemento;
-                            cliente.nm_Bairro = CEP.bairro;
-                            cliente.nm_Cidade = CEP.localidade;
-                            cliente.cd_Estado = CEP.uf;
-
-                            return true;
+                                    return true;
+                                }
+                            }
                         }
                     }
                 }
+                throw new InputValidationException("CEP inválido.");
             }
-            return false;
+            return true;
         }
 
         public static async Task<bool> ValidateEmail(string emailCliente)

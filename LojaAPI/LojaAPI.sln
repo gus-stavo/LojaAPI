@@ -5,7 +5,12 @@ VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LojaAPI", "LojaAPI\LojaAPI.csproj", "{851D607B-F1BA-4BD9-AFD5-509617CEB1BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LojaAPITests", "LojaAPITests\LojaAPITests.csproj", "{76DA7BCF-2364-40B3-BD19-D66AE10E3745}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LojaAPITests", "LojaAPITests\LojaAPITests.csproj", "{76DA7BCF-2364-40B3-BD19-D66AE10E3745}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{24D7841C-504A-491D-BDA1-CE6DBD672C37}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -27,6 +27,22 @@ namespace LojaAPITests.Infra.CrossCutting
                 {
                     new Cliente
                     {
+                        cd_CEP = "e"
+                    }
+                };
+
+                yield return new object[]
+                {
+                    new Cliente
+                    {
+                        cd_CEP = "1146301e"
+                    }
+                };
+
+                yield return new object[]
+                {
+                    new Cliente
+                    {
                         cd_CEP = "11111111"
                     }
                 };
@@ -89,6 +105,8 @@ namespace LojaAPITests.Infra.CrossCutting
 
         [Theory]
         [InlineData("")]
+        [InlineData("e")]
+        [InlineData("4493774282e")]
         [InlineData("44937742825")]
         [InlineData("44937742826")]
         public async Task ValidateCpf(string cpfCliente)
@@ -100,8 +118,10 @@ namespace LojaAPITests.Infra.CrossCutting
 
         [Theory]
         [InlineData("")]
-        [InlineData("11111111111111")]
+        [InlineData("e")]
+        [InlineData("0276212100141e")]
         [InlineData("02762121001410")]
+        [InlineData("11111111111111")]
         public async Task ValidateCnpj(string cnpjCliente)
         {
             bool retorno = await Validations.ValidateCnpj(cnpjCliente);
