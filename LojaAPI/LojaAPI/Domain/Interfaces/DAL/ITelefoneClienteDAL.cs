@@ -15,6 +15,5 @@ namespace LojaAPI.Domain.Interfaces.DAL
         Task DeleteTelefones(long idCliente);
 
         Task DeleteTelefones(long idCliente, List<long> ids);
-
     }
 }
