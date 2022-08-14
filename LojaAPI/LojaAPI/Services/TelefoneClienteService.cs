@@ -14,9 +14,24 @@ namespace LojaAPI.Services
             _telefoneClienteDAL = telefoneClienteDAL;
         }
 
-        public async Task<IEnumerable<TelefoneCliente>> GetTelefones(long idCliente)
+        public async Task<IEnumerable<SelectTelefoneCliente>> GetTelefones(long idCliente)
         {
-            return await _telefoneClienteDAL.GetTelefones(idCliente);
+            var telefonesCliente = await _telefoneClienteDAL.GetTelefones(idCliente);
+
+            List<SelectTelefoneCliente> telefonesClienteDTO = new List<SelectTelefoneCliente>();
+
+            foreach (var telefoneCliente in telefonesCliente) 
+            {
+                var telefoneClienteDTO = new SelectTelefoneCliente()
+                {
+                    cd_TelefonesClientes = telefoneCliente.cd_TelefonesClientes,
+                    cd_Telefone = telefoneCliente.cd_Telefone,
+                };
+
+                telefonesClienteDTO.Add(telefoneClienteDTO);
+            }
+
+            return telefonesClienteDTO;
         }
 
         public async Task InsertTelefones(long idCliente, List<InsertTelefoneCliente> telefonesClienteDTO)

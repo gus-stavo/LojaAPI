@@ -1,4 +1,5 @@
 ﻿using LojaAPI.Domain.DTO.Cliente;
+using LojaAPI.Domain.DTO.TelefoneCliente;
 using LojaAPI.Domain.Interfaces.DAL;
 using LojaAPI.Domain.Interfaces.Services;
 using LojaAPI.Domain.Models;
@@ -15,14 +16,81 @@ namespace LojaAPI.Services
             _clienteDAL = clienteDAL;
         }
 
-        public async Task<IEnumerable<Cliente>> GetClientes() 
+        public async Task<IEnumerable<SelectCliente>> GetClientes() 
         {
-            return await _clienteDAL.GetClientes();
+            var clientes =  await _clienteDAL.GetClientes();
+
+            List<SelectCliente> clientesDTO = new List<SelectCliente>();
+
+            foreach (var cliente in clientes) 
+            {
+                var telefonesCliente = cliente.telefonesCliente;
+
+                List<SelectTelefoneCliente> telefonesClienteDTO = new List<SelectTelefoneCliente>();
+
+                foreach (var telefoneCliente in telefonesCliente)
+                {
+                    var telefoneClienteDTO = new SelectTelefoneCliente()
+                    {
+                        cd_TelefonesClientes = telefoneCliente.cd_TelefonesClientes,
+                        cd_Telefone = telefoneCliente.cd_Telefone,
+                    };
+
+                    telefonesClienteDTO.Add(telefoneClienteDTO);
+                }
+
+                var clienteDTO = new SelectCliente()
+                {
+                    cd_Cliente = cliente.cd_Cliente,
+                    cd_CPF = cliente.cd_CPF,
+                    cd_CNPJ = cliente.cd_CNPJ,
+                    nm_Cliente = cliente.nm_Cliente,
+                    nm_RazaoSocial = cliente.nm_RazaoSocial,
+                    cd_CEP = cliente.cd_CEP,
+                    nm_Logradouro = cliente.nm_Logradouro,
+                    cd_Logradouro = cliente.cd_Logradouro,
+                    ds_Complemento = cliente.ds_Complemento,
+                    nm_Bairro = cliente.nm_Bairro,
+                    nm_Cidade = cliente.nm_Cidade,
+                    cd_Estado = cliente.cd_Estado,
+                    ds_Email = cliente.ds_Email, 
+                    telefonesCliente = telefonesClienteDTO,
+                    ds_Classificacao = cliente.ds_Classificacao,
+                };
+
+                clientesDTO.Add(clienteDTO);
+            }
+
+            return clientesDTO;
         }
 
-        public async Task<Cliente> GetCliente(long id)
+        public async Task<SelectCliente> GetCliente(long id)
         {
-            return await _clienteDAL.GetCliente(id);
+            var cliente = await _clienteDAL.GetCliente(id);
+
+            if (cliente == null) return null;
+            else 
+            {
+                var clienteDTO = new SelectCliente()
+                {
+                    cd_Cliente = cliente.cd_Cliente,
+                    cd_CPF = cliente.cd_CPF,
+                    cd_CNPJ = cliente.cd_CNPJ,
+                    nm_Cliente = cliente.nm_Cliente,
+                    nm_RazaoSocial = cliente.nm_RazaoSocial,
+                    cd_CEP = cliente.cd_CEP,
+                    nm_Logradouro = cliente.nm_Logradouro,
+                    cd_Logradouro = cliente.cd_Logradouro,
+                    ds_Complemento = cliente.ds_Complemento,
+                    nm_Bairro = cliente.nm_Bairro,
+                    nm_Cidade = cliente.nm_Cidade,
+                    cd_Estado = cliente.cd_Estado,
+                    ds_Email = cliente.ds_Email,
+                    ds_Classificacao = cliente.ds_Classificacao,
+                };
+
+                return clienteDTO;
+            }
         }
 
         public async Task<int> InsertCliente(InsertCliente clienteInseridoDTO)

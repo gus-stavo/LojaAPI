@@ -5,7 +5,7 @@ namespace LojaAPI.Domain.Interfaces.Services
 {
     public interface ITelefoneClienteService
     {
-        Task<IEnumerable<TelefoneCliente>> GetTelefones(long idCliente);
+        Task<IEnumerable<SelectTelefoneCliente>> GetTelefones(long idCliente);
 
         Task InsertTelefones(long idCliente, List<InsertTelefoneCliente> telefonesClienteDTO);
 

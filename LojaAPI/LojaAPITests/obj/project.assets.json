@@ -6275,8 +6275,9 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Gus\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\Gustavo Stefano\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
@@ -6284,14 +6285,15 @@
       "projectUniqueName": "C:\\GitHub\\LojaAPI\\LojaAPI\\LojaAPITests\\LojaAPITests.csproj",
       "projectName": "LojaAPITests",
       "projectPath": "C:\\GitHub\\LojaAPI\\LojaAPI\\LojaAPITests\\LojaAPITests.csproj",
-      "packagesPath": "C:\\Users\\Gus\\.nuget\\packages\\",
+      "packagesPath": "C:\\Users\\Gustavo Stefano\\.nuget\\packages\\",
       "outputPath": "C:\\GitHub\\LojaAPI\\LojaAPI\\LojaAPITests\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\Gus\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Gustavo Stefano\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],

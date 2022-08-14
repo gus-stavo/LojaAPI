@@ -24,7 +24,7 @@ namespace LojaAPI.Controllers
         /// </summary>
         /// <response code="200">Retorna lista de clientes</response>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cliente>>> GetClientes()
+        public async Task<ActionResult<IEnumerable<SelectCliente>>> GetClientes()
         {
             return Ok(await _clienteService.GetClientes());
         }
@@ -35,7 +35,7 @@ namespace LojaAPI.Controllers
         /// <response code="200">Retorna cliente</response>
         /// <response code="404">Cliente não encontrado</response>
         [HttpGet("{id}")]
-        public async Task<ActionResult<Cliente>> GetCliente(long id)
+        public async Task<ActionResult<SelectCliente>> GetCliente(long id)
         {
             var cliente = await _clienteService.GetCliente(id);
             if (cliente == null) return StatusCode(404, new { message = $"Não foi encontrado nenhum cliente com o id {id}." });
