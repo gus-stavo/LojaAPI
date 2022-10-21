@@ -1,7 +1,6 @@
 ﻿using LojaAPI.Domain.DTO.Cliente;
 using LojaAPI.Domain.Exceptions;
 using LojaAPI.Domain.Interfaces.Services;
-using LojaAPI.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LojaAPI.Controllers
