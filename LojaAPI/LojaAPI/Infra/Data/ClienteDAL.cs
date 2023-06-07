@@ -1,62 +1,61 @@
-﻿using Dapper;
+﻿using LojaAPI.Domain.DTO.Cliente;
 using LojaAPI.Domain.Interfaces.DAL;
 using LojaAPI.Domain.Models;
+using LojaAPI.Domain.Parser.ParserTelefone;
+using LojaAPI.Infra.Context;
+using Microsoft.EntityFrameworkCore;
 using System.Data.SqlClient;
 
 namespace LojaAPI.Infra.Data
 {
     public class ClienteDAL : IClienteDAL
     {
-        private readonly IConfiguration _configuration;
-        private readonly string _conn;
+        private readonly LojaDbContext _context;
 
-        public ClienteDAL(IConfiguration configuration) 
+        public ClienteDAL(LojaDbContext context) 
         {
-            _configuration = configuration;
-            _conn = _configuration.GetConnectionString("LojaMSSQL") + ";AttachDbFilename = " + Directory.GetCurrentDirectory() + "\\AppData\\Loja.mdf";
+            _context = context;
         }
 
         public async Task<IEnumerable<Cliente>> GetClientes() 
         {
-            using var connection = new SqlConnection(_conn);
-
-            var clientes = await connection.QueryAsync<Cliente>("select * from clientes");
-
-            foreach (var cliente in clientes)
-            {
-                var telefonesCliente = await connection.QueryAsync<TelefoneCliente>("select * from telefones_clientes where cd_Cliente = @cd_Cliente", new { cd_Cliente = cliente.cd_Cliente });
-                cliente.telefonesCliente = telefonesCliente.ToList();
-            }
-
-            return clientes;
+            return await _context.Clientes.Include(c => c.telefones).ToListAsync();
         }
 
-        public async Task<Cliente> GetCliente(long id) 
+        public async Task<Cliente> GetClienteById(long codigoCliente) 
         {
-            using var connection = new SqlConnection(_conn);
-
-            return await connection.QueryFirstOrDefaultAsync<Cliente>("select * from clientes where cd_Cliente = @cd_Cliente", new { cd_Cliente = id });
+            return await _context.Clientes.Include(c => c.telefones).Where(c => c.cdCliente == codigoCliente).FirstOrDefaultAsync();
         }
 
-        public async Task<int> InsertCliente(Cliente clienteInserido)
+        public async Task<long> CreateCliente(Cliente cliente)
         {
-            using var connection = new SqlConnection(_conn);
+            await _context.Clientes.AddAsync(cliente);
+            await _context.SaveChangesAsync();
 
-            return await connection.QuerySingleAsync<int>("insert into clientes (cd_CPF, cd_CNPJ, nm_Cliente, nm_RazaoSocial, cd_CEP, nm_Logradouro, cd_Logradouro, ds_Complemento, nm_Bairro, nm_Cidade, cd_Estado, ds_Email, ds_Classificacao) output inserted.cd_Cliente values (@cd_CPF, @cd_CNPJ, @nm_Cliente, @nm_RazaoSocial, @cd_CEP, @nm_Logradouro, @cd_Logradouro, @ds_Complemento, @nm_Bairro, @nm_Cidade, @cd_Estado, @ds_Email, @ds_Classificacao)", clienteInserido);
+            return cliente.cdCliente;
         }
 
-        public async Task UpdateCliente(Cliente clienteAtualizado)
+        public async Task UpdateCliente(Cliente cliente, UpdateCliente clienteDTO)
         {
-            using var connection = new SqlConnection(_conn);
+            cliente.cdCpf = clienteDTO.codigoCpf;
+            cliente.cdCnpj = clienteDTO.codigoCnpj;
+            cliente.nmCliente = clienteDTO.nomeCliente;
+            cliente.nmRazaoSocial = clienteDTO.nomeRazaoSocial;
+            cliente.cdCep = clienteDTO.codigoCep;
+            cliente.nrLogradouro = clienteDTO.numeroLogradouro;
+            cliente.dsEmail = clienteDTO.descricaoEmail;
+            cliente.dsClassificacao = clienteDTO.descricaoClassificacao;
 
-            await connection.ExecuteAsync("update clientes set cd_CPF = @cd_CPF, cd_CNPJ = @cd_CNPJ, nm_Cliente = @nm_Cliente, nm_RazaoSocial = @nm_RazaoSocial, cd_CEP = @cd_CEP, nm_Logradouro = @nm_Logradouro, cd_Logradouro = @cd_Logradouro, ds_Complemento = @ds_Complemento, nm_Bairro = @nm_Bairro, nm_Cidade = @nm_Cidade, cd_Estado = @cd_Estado, ds_Email = @ds_Email, ds_Classificacao = @ds_Classificacao where cd_Cliente = @cd_Cliente", clienteAtualizado);
+            //_context.Clientes.Attach(cliente);
+            //_context.Clientes.Entry(cliente).State = EntityState.Modified;
+
+            await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteCliente(long id)
+        public async Task DeleteCliente(Cliente cliente)
         {
-            using var connection = new SqlConnection(_conn);
-
-            await connection.ExecuteAsync("delete from clientes where cd_Cliente = @cd_Cliente", new { cd_Cliente = id });
+            _context.Clientes.Remove(cliente);
+            await _context.SaveChangesAsync();
         }
     }
 }

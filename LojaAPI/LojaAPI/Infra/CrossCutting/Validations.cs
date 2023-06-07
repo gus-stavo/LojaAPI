@@ -1,4 +1,5 @@
-﻿using LojaAPI.Domain.Exceptions;
+﻿using LojaAPI.Domain.DTO.TelefoneCliente;
+using LojaAPI.Domain.Exceptions;
 using LojaAPI.Domain.Models;
 using Newtonsoft.Json;
 using System.Net;
@@ -11,19 +12,19 @@ namespace LojaAPI.Infra.CrossCutting
     {
         public static async Task ValidateInputs(Cliente cliente)
         {
-            await ValidateCpfCnpj(cliente.cd_CPF, cliente.cd_CNPJ);
+            await ValidateCpfCnpj(cliente.cdCpf, cliente.cdCnpj);
 
-            if (!String.IsNullOrWhiteSpace(cliente.cd_CPF)) await ValidateCpf(cliente.cd_CPF);
+            if (!String.IsNullOrWhiteSpace(cliente.cdCpf)) await ValidateCpf(cliente.cdCpf);
 
-            if (!String.IsNullOrWhiteSpace(cliente.cd_CNPJ)) await ValidateCnpj(cliente.cd_CNPJ);
+            if (!String.IsNullOrWhiteSpace(cliente.cdCnpj)) await ValidateCnpj(cliente.cdCnpj);
 
             await ValidateCep(cliente);
 
-            await ValidateEmail(cliente.ds_Email);
+            await ValidateEmail(cliente.dsEmail);
 
-            await ValidateTelefone(cliente.telefonesCliente);
+            //await ValidateTelefone(cliente.telefones);
 
-            await ValidateClassificacao(cliente.ds_Classificacao);
+            await ValidateClassificacao(cliente.dsClassificacao);
         }
 
         public static async Task<bool> ValidateCpfCnpj(string clienteCPF, string clienteCNPJ)
@@ -127,7 +128,7 @@ namespace LojaAPI.Infra.CrossCutting
 
         public static async Task<bool> ValidateCep(Cliente cliente)
         {
-            string clienteCEP = cliente.cd_CEP;
+            string clienteCEP = cliente.cdCep;
 
             if (!String.IsNullOrWhiteSpace(clienteCEP))
             {
@@ -149,11 +150,11 @@ namespace LojaAPI.Infra.CrossCutting
 
                                 if (CEP.erro != "true") 
                                 {
-                                    cliente.nm_Logradouro = CEP.logradouro;
-                                    cliente.ds_Complemento = CEP.complemento;
-                                    cliente.nm_Bairro = CEP.bairro;
-                                    cliente.nm_Cidade = CEP.localidade;
-                                    cliente.cd_Estado = CEP.uf;
+                                    cliente.nmLogradouro = CEP.logradouro;
+                                    cliente.dsComplemento = CEP.complemento;
+                                    cliente.nmBairro = CEP.bairro;
+                                    cliente.nmCidade = CEP.localidade;
+                                    cliente.cdEstado = CEP.uf;
 
                                     return true;
                                 }
@@ -179,15 +180,31 @@ namespace LojaAPI.Infra.CrossCutting
             }
         }
 
-        public static async Task<bool> ValidateTelefone(List<TelefoneCliente> telefonesCliente)
+        public static async Task<bool> ValidateTelefone(IEnumerable<InsertTelefone> telefones)
         {
-            if (telefonesCliente != null && telefonesCliente.Any())
+            if (telefones != null && telefones.Any())
             {
                 Regex rgx = new Regex(@"^\d{2}9?\d{8}$");
 
-                foreach (var telefoneCliente in telefonesCliente)
+                foreach (var telefone in telefones)
                 {
-                    if (!rgx.IsMatch(telefoneCliente.cd_Telefone)) throw new InputValidationException($"Número de telefone: {telefoneCliente.cd_Telefone} inválido.");
+                    if (!rgx.IsMatch(telefone.numeroTelefone)) throw new InputValidationException($"Número de telefone: {telefone.numeroTelefone} inválido.");
+                }
+            }
+            else throw new InputValidationException("Insira ao menos um número de telefone.");
+
+            return true;
+        }
+
+        public static async Task<bool> ValidateTelefone(IEnumerable<UpdateTelefone> telefones)
+        {
+            if (telefones != null && telefones.Any())
+            {
+                Regex rgx = new Regex(@"^\d{2}9?\d{8}$");
+
+                foreach (var telefone in telefones)
+                {
+                    if (!rgx.IsMatch(telefone.numeroTelefone)) throw new InputValidationException($"Número de telefone: {telefone.numeroTelefone} inválido.");
                 }
             }
             else throw new InputValidationException("Insira ao menos um número de telefone.");

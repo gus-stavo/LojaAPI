@@ -14,7 +14,7 @@ namespace LojaAPITests.Infra.CrossCutting
                 {
                     new Cliente
                     {
-                        cd_CEP = ""
+                        cdCep = ""
                     }
                 };
 
@@ -22,7 +22,7 @@ namespace LojaAPITests.Infra.CrossCutting
                 {
                     new Cliente
                     {
-                        cd_CEP = "e"
+                        cdCep = "e"
                     }
                 };
 
@@ -30,7 +30,7 @@ namespace LojaAPITests.Infra.CrossCutting
                 {
                     new Cliente
                     {
-                        cd_CEP = "1146301e"
+                        cdCep = "1146301e"
                     }
                 };
 
@@ -38,7 +38,7 @@ namespace LojaAPITests.Infra.CrossCutting
                 {
                     new Cliente
                     {
-                        cd_CEP = "11111111"
+                        cdCep = "11111111"
                     }
                 };
 
@@ -46,7 +46,7 @@ namespace LojaAPITests.Infra.CrossCutting
                 {
                     new Cliente
                     {
-                        cd_CEP = "11463010"
+                        cdCep = "11463010"
                     }
                 };
             }
@@ -59,7 +59,7 @@ namespace LojaAPITests.Infra.CrossCutting
             {
                 yield return new object[]
                 {
-                    new List<TelefoneCliente>()
+                    new List<Telefone>()
                     {
                         
                     }
@@ -67,19 +67,19 @@ namespace LojaAPITests.Infra.CrossCutting
 
                 yield return new object[]
                 {
-                    new List<TelefoneCliente>()
+                    new List<Telefone>()
                     {
-                        new TelefoneCliente{ cd_Telefone = "13974224510" },
-                        new TelefoneCliente{ cd_Telefone = "1112345678" },
+                        new Telefone{ nrTelefone = "13974224510" },
+                        new Telefone{ nrTelefone = "1112345678" },
                     }
                 };
 
                 yield return new object[]
                 {
-                    new List<TelefoneCliente>()
+                    new List<Telefone>()
                     {
-                        new TelefoneCliente{ cd_Telefone = "13974224510" },
-                        new TelefoneCliente{ cd_Telefone = "55" },
+                        new Telefone{ nrTelefone = "13974224510" },
+                        new Telefone{ nrTelefone = "55" },
                     }
                 };
             }
@@ -147,7 +147,7 @@ namespace LojaAPITests.Infra.CrossCutting
 
         [Theory]
         [ClassData(typeof(ValidaTelefoneParameters))]
-        public async Task ValidateTelefone(List<TelefoneCliente> telefonesCliente)
+        public async Task ValidateTelefone(List<Telefone> telefonesCliente)
         {
             bool retorno = await Validations.ValidateTelefone(telefonesCliente);
 

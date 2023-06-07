@@ -7,12 +7,12 @@ namespace LojaAPI.Domain.Interfaces.Services
     {
         Task<IEnumerable<SelectCliente>> GetClientes();
 
-        Task<SelectCliente> GetCliente(long id);
+        Task<SelectCliente> GetClienteById(long codigoCliente);
 
-        Task<int> InsertCliente(InsertCliente clienteInseridoDTO);
+        Task<long> CreateCliente(InsertCliente clienteDTO);
 
-        Task UpdateCliente(long id, UpdateCliente clienteAtualizadoDTO);
+        Task UpdateCliente(UpdateCliente clienteDTO);
 
-        Task DeleteCliente(long id);
+        Task DeleteCliente(SelectCliente clienteDTO);
     }
 }

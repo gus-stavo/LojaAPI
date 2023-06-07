@@ -1,16 +1,25 @@
 using LojaAPI.Domain.Interfaces.DAL;
 using LojaAPI.Domain.Interfaces.Services;
+using LojaAPI.Infra.Context;
 using LojaAPI.Infra.Data;
 using LojaAPI.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllersWithViews()
+    .AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
+
+builder.Services.AddDbContext<LojaDbContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("LojaMSSQL")));
+
 builder.Services.AddScoped<IClienteService, ClienteService>();
 builder.Services.AddScoped<IClienteDAL, ClienteDAL>();
-builder.Services.AddScoped<ITelefoneClienteService, TelefoneClienteService>();
-builder.Services.AddScoped<ITelefoneClienteDAL, TelefoneClienteDAL>();
+builder.Services.AddScoped<ITelefoneService, TelefoneService>();
+builder.Services.AddScoped<ITelefoneDAL, TelefoneDAL>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

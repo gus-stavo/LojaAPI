@@ -1,7 +1,10 @@
 ﻿using LojaAPI.Domain.DTO.Cliente;
 using LojaAPI.Domain.Exceptions;
 using LojaAPI.Domain.Interfaces.Services;
+using LojaAPI.Domain.Models;
+using LojaAPI.Infra.Context;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace LojaAPI.Controllers
 {
@@ -10,12 +13,12 @@ namespace LojaAPI.Controllers
     public class ClienteController : ControllerBase
     {
         private readonly IClienteService _clienteService;
-        private readonly ITelefoneClienteService _telefoneClienteService;
+        private readonly ITelefoneService _telefoneService;
 
-        public ClienteController(IConfiguration configuration, IClienteService clienteService, ITelefoneClienteService telefoneClienteService)
+        public ClienteController(IClienteService clienteService, ITelefoneService telefoneService)
         {
             _clienteService = clienteService;
-            _telefoneClienteService = telefoneClienteService;
+            _telefoneService = telefoneService;
         }
 
         /// <summary>
@@ -29,20 +32,21 @@ namespace LojaAPI.Controllers
         }
 
         /// <summary>
-        /// Retorna cliente por id
+        /// Retorna cliente por codigoCliente
         /// </summary>
         /// <response code="200">Retorna cliente</response>
         /// <response code="404">Cliente não encontrado</response>
-        [HttpGet("{id}")]
-        public async Task<ActionResult<SelectCliente>> GetCliente(long id)
+        [HttpGet("{codigoCliente}")]
+        public async Task<ActionResult<SelectCliente>> GetClienteById(long codigoCliente)
         {
-            var cliente = await _clienteService.GetCliente(id);
-            if (cliente == null) return StatusCode(404, new { message = $"Não foi encontrado nenhum cliente com o id {id}." });
-
-            var telefonesCliente = await _telefoneClienteService.GetTelefones(id);
-            cliente.telefonesCliente = telefonesCliente.ToList();
-
-            return Ok(cliente);
+            try
+            {
+                return Ok(await _clienteService.GetClienteById(codigoCliente));
+            }
+            catch (Exception)
+            {
+                return StatusCode(404, new { message = $"Não foi encontrado nenhum cliente com o código {codigoCliente}." }); ;
+            }
         }
 
         /// <summary>
@@ -52,19 +56,19 @@ namespace LojaAPI.Controllers
         /// <response code="422">Informação inválida ou não informada</response>
         /// <response code="503">Servidor VIACEP indisponível</response>
         [HttpPost]
-        public async Task<ActionResult> InsertCliente([FromBody] InsertCliente clienteInseridoDTO)
+        public async Task<IActionResult> CreateCliente([FromBody] InsertCliente clienteDTO)
         {
             try
             {
-                var id = await _clienteService.InsertCliente(clienteInseridoDTO);
-                await _telefoneClienteService.InsertTelefones(id, clienteInseridoDTO.telefonesCliente);
-                return CreatedAtAction(nameof(GetCliente), new { id }, id);
+                long cdCliente = await _clienteService.CreateCliente(clienteDTO);
+                await _telefoneService.CreateTelefones(cdCliente, clienteDTO.telefones);
+                return CreatedAtAction(nameof(GetClienteById), new { codigoCliente = cdCliente }, cdCliente);
             }
             catch (InputValidationException e)
             {
                 return StatusCode(422, new { message = e.Message });
             }
-            catch (ServiceUnavailableException e) 
+            catch (ServiceUnavailableException e)
             {
                 return StatusCode(503, new { message = e.Message });
             }
@@ -79,21 +83,21 @@ namespace LojaAPI.Controllers
         /// </summary>
         /// <response code="204">Cliente atualizado</response>
         /// <response code="404">Cliente não encontrado</response>
-        /// <response code="409">Id do cliente inválido</response>
+        /// <response code="409"´>Código do cliente inválido</response>
         /// <response code="422">Informação inválida ou não informada</response>
         /// <response code="503">Servidor VIACEP indisponível</response>
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdatetCliente(long id, [FromBody] UpdateCliente clienteAtualizadoDTO)
+        [HttpPut("{códigoCliente}")]
+        public async Task<ActionResult> UpdateCliente(long codigoCliente, [FromBody] UpdateCliente clienteDTO)
         {
-            if (clienteAtualizadoDTO.cd_Cliente != id) return StatusCode(409, new { message = "Você está tentando atualizar o cliente errado." });
+            if (clienteDTO.codigoCliente != codigoCliente) return StatusCode(409, new { message = "Você está tentando atualizar o cliente errado." });
 
-            var cliente = await _clienteService.GetCliente(id);
-            if (cliente == null) return StatusCode(404, new { message = $"Não foi encontrado nenhum cliente com o id {id}." });
+            SelectCliente cliente = await _clienteService.GetClienteById(codigoCliente);
+            if (cliente is null) return StatusCode(404, new { message = $"Não foi encontrado nenhum cliente com o código {codigoCliente}." });
 
             try
             {
-                await _clienteService.UpdateCliente(id, clienteAtualizadoDTO);
-                await _telefoneClienteService.UpdateTelefones(id, clienteAtualizadoDTO.telefonesCliente);
+                await _clienteService.UpdateCliente(clienteDTO);
+                await _telefoneService.UpdateTelefones(codigoCliente, clienteDTO.telefones);
                 return NoContent();
             }
             catch (InputValidationException e)
@@ -115,19 +119,18 @@ namespace LojaAPI.Controllers
         /// </summary>
         /// <response code="204">Cliente excluído</response>
         /// <response code="404">Cliente não encontrado</response>
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteCliente(long id)
+        [HttpDelete("{codigoCliente}")]
+        public async Task<IActionResult> DeleteCliente(long codigoCliente)
         {
-            var cliente = await _clienteService.GetCliente(id);
-            if (cliente == null) return StatusCode(404, new { message = $"Não foi encontrado nenhum cliente com o id {id}." });
+            SelectCliente clienteDTO = await _clienteService.GetClienteById(codigoCliente);
+            if (clienteDTO is null) return StatusCode(404, new { message = $"Não foi encontrado nenhum cliente com o código {codigoCliente}." });
 
-            try 
+            try
             {
-                await _telefoneClienteService.DeleteTelefones(id);
-                await _clienteService.DeleteCliente(id);
+                await _clienteService.DeleteCliente(clienteDTO);
                 return NoContent();
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                 return StatusCode(500, new { message = $"Erro no Delete Cliente: {e.Message}" });
             }

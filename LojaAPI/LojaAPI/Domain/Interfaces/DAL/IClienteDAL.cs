@@ -1,4 +1,5 @@
-﻿using LojaAPI.Domain.Models;
+﻿using LojaAPI.Domain.DTO.Cliente;
+using LojaAPI.Domain.Models;
 
 namespace LojaAPI.Domain.Interfaces.DAL
 {
@@ -6,12 +7,12 @@ namespace LojaAPI.Domain.Interfaces.DAL
     {
         Task<IEnumerable<Cliente>> GetClientes();
 
-        Task<Cliente> GetCliente(long id);
+        Task<Cliente> GetClienteById(long codigoCliente);
 
-        Task<int> InsertCliente(Cliente clienteInserido);
+        Task<long> CreateCliente(Cliente cliente);
 
-        Task UpdateCliente(Cliente clienteAtualizado);
+        Task UpdateCliente(Cliente cliente, UpdateCliente clienteDTO);
 
-        Task DeleteCliente(long id);
+        Task DeleteCliente(Cliente cliente);
     }
 }

@@ -6,51 +6,34 @@ namespace LojaAPI.Domain.DTO.Cliente
 {
     public class SelectCliente
     {
-        [Key]
-        public long cd_Cliente { get; set; }
+        public long codigoCliente { get; set; }
 
-        [MaxLength(11)]
-        public string? cd_CPF { get; set; }
+        public string? codigoCpf { get; set; }
 
-        [MaxLength(14)]
-        public string? cd_CNPJ { get; set; }
+        public string? codigoCnpj { get; set; }
 
-        [MaxLength(100)]
-        [Required(ErrorMessage = "O campo \"Nome\" é obrigatório.")]
-        public string nm_Cliente { get; set; } = null!;
+        public string nomeCliente { get; set; } = null!;
 
-        [MaxLength(100)]
-        public string? nm_RazaoSocial { get; set; }
+        public string? nomeRazaoSocial { get; set; }
 
-        [MaxLength(8)]
-        public string? cd_CEP { get; set; }
+        public string? codigoCep { get; set; }
 
-        [MaxLength(100)]
-        public string? nm_Logradouro { get; set; }
+        public string? nomeLogradouro { get; set; }
 
-        public int? cd_Logradouro { get; set; }
+        public int? numeroLogradouro { get; set; }
 
-        [MaxLength(100)]
-        public string? ds_Complemento { get; set; }
+        public string? descricaoComplemento { get; set; }
 
-        [MaxLength(100)]
-        public string? nm_Bairro { get; set; }
+        public string? nomeBairro { get; set; }
 
-        [MaxLength(100)]
-        public string? nm_Cidade { get; set; }
+        public string? nomeCidade { get; set; }
 
-        [MaxLength(2)]
-        public string? cd_Estado { get; set; }
+        public string? codigoEstado { get; set; }
 
-        [MaxLength(100)]
-        [Required(ErrorMessage = "O campo \"E-mail\" é obrigatório.")]
-        public string ds_Email { get; set; } = null!;
+        public string descricaoEmail { get; set; } = null!;
 
-        [Required(ErrorMessage = "Insira ao menos um telefone.")]
-        public List<SelectTelefoneCliente> telefonesCliente { get; set; } = null!;
+        public string descricaoClassificacao { get; set; } = null!;
 
-        [MaxLength(12)]
-        [Required(ErrorMessage = "O campo \"Classificação\" é obrigatório.")]
-        public string ds_Classificacao { get; set; } = null!;
+        public IEnumerable<SelectTelefone> telefones { get; set; } = null!;
     }
 }
